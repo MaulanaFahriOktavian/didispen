@@ -14,4 +14,9 @@ class Major extends Model
         'name',
         'is_active',
     ];
+
+    public function classes()
+    {
+        return $this->hasMany(SchoolClass::class);
+    }
 }

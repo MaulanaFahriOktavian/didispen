@@ -13,6 +13,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             MajorSeeder::class,
+            AcademicYearSeeder::class,
+            SemesterSeeder::class,
         ]);
     }
 }
