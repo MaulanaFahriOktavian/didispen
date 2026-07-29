@@ -6,72 +6,137 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('dispensations', function (Blueprint $table) {
 
             $table->id();
 
-            // Nomor Surat
+            /*
+            |--------------------------------------------------------------------------
+            | Nomor Dispensasi
+            |--------------------------------------------------------------------------
+            | Contoh:
+            | DSP-20260729-0001
+            */
+
             $table->string('code')->unique();
 
-            // UUID untuk QR
-            $table->uuid('uuid')->unique();
+            /*
+            |--------------------------------------------------------------------------
+            | Pemohon
+            |--------------------------------------------------------------------------
+            */
 
-            // Relasi
-            $table->foreignId('student_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->enum('applicant_type', [
+                'student',
+                'teacher'
+            ]);
 
-            $table->foreignId('category_id')->constrained('dispensation_categories')->cascadeOnUpdate()->restrictOnDelete();
+            $table->unsignedBigInteger('applicant_id');
 
-            $table->foreignId('destination_id')->constrained('dispensation_destinations')->cascadeOnUpdate()->restrictOnDelete();
+            /*
+            |--------------------------------------------------------------------------
+            | Master
+            |--------------------------------------------------------------------------
+            */
 
-            $table->foreignId('approved_by')->nullable()->constrained('users')->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignId('category_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-            $table->text('purpose');
+            $table->foreignId('destination_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-            $table->text('description')->nullable();
+            /*
+            |--------------------------------------------------------------------------
+            | Keperluan
+            |--------------------------------------------------------------------------
+            */
 
             $table->date('dispensation_date');
 
-            $table->time('exit_plan');
+            $table->time('leave_time');
 
-            $table->time('return_plan');
+            $table->time('estimated_return_time');
 
-            // Waktu Real
-            $table->timestamp('exit_at')->nullable();
+            $table->time('actual_return_time')->nullable();
 
-            $table->timestamp('return_at')->nullable();
+            $table->text('reason');
 
-            // Approval
-            $table->timestamp('approved_at')->nullable();
+            /*
+            |--------------------------------------------------------------------------
+            | Approval
+            |--------------------------------------------------------------------------
+            */
 
-            $table->text('teacher_note')->nullable();
+            $table->foreignId('approved_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
-            // PDF
-            $table->string('pdf_file')->nullable();
+            /*
+            |--------------------------------------------------------------------------
+            | Satpam
+            |--------------------------------------------------------------------------
+            */
 
-            // Status
+            $table->foreignId('checked_out_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
+            $table->foreignId('checked_in_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
+            /*
+            |--------------------------------------------------------------------------
+            | QR Code
+            |--------------------------------------------------------------------------
+            */
+
+            $table->string('qr_token')->nullable()->unique();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Status
+            |--------------------------------------------------------------------------
+            */
+
             $table->enum('status',[
                 'pending',
                 'approved',
-                'out',
-                'back',
-                'finished',
+                'checked_out',
+                'returned',
+                'completed',
                 'rejected',
                 'cancelled'
             ])->default('pending');
+
+            /*
+            |--------------------------------------------------------------------------
+            | Catatan
+            |--------------------------------------------------------------------------
+            */
+
+            $table->text('rejection_reason')->nullable();
+
+            $table->text('note')->nullable();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Timestamp
+            |--------------------------------------------------------------------------
+            */
 
             $table->timestamps();
 
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('dispensations');

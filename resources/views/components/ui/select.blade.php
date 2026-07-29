@@ -2,11 +2,9 @@
     'name'
 ])
 
-<input
+<select
 
 name="{{ $name }}"
-
-value="{{ old($name) }}"
 
 {{ $attributes->merge([
 
@@ -16,6 +14,7 @@ w-full
 rounded-2xl
 border
 border-zinc-300
+
 bg-white
 
 px-4
@@ -31,4 +30,8 @@ focus:border-violet-500
 
 ]) }}
 
-/>
+>
+
+{{ $slot }}
+
+</select>

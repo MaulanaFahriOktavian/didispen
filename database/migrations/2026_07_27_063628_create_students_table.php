@@ -9,46 +9,56 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('students', function (Blueprint $table) {
+
             $table->id();
 
-            $table->string('nis')->unique();
-            $table->string('nisn')->nullable()->unique();
-            
-            $table->string('full_name');
+            // Identitas
+            $table->string('nis',20)->unique();
+            $table->string('nisn',20)->unique();
 
-            $table->enum('gender', ['L', 'P']);
+            $table->string('full_name',150);
 
-            $table->string('birth_place');
+            $table->enum('gender',[
+                'L',
+                'P'
+            ]);
+
+            $table->string('birth_place',100);
+
             $table->date('birth_date');
 
             $table->text('address')->nullable();
-            $table->string('phone', 20)->nullable();
+
+            $table->string('phone',20)->nullable();
+
             $table->string('email')->nullable();
 
+            // Jurusan
             $table->foreignId('major_id')
-                ->constrained('majors')
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
+                ->constrained()
+                ->cascadeOnDelete();
 
-            $table->foreignId('class_id')
-                ->constrained('school_classes')
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
+            // Login siswa
+            $table->string('password');
 
-            $table->foreignId('academic_year_id')
-                ->constrained('academic_years')
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
-
-            $table->enum('status', [
+            // Status siswa
+            $table->enum('status',[
                 'aktif',
                 'lulus',
-                'pindah'
+                'pindah',
+                'keluar'
             ])->default('aktif');
 
+            // Foto
             $table->string('photo')->nullable();
 
+            // Login terakhir
+            $table->timestamp('last_login_at')->nullable();
+
+            $table->rememberToken();
+
             $table->timestamps();
+
         });
     }
 

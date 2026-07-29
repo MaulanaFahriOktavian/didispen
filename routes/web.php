@@ -37,6 +37,9 @@ Route::prefix('student')->group(function () {
 
         Route::post('/logout', [AuthController::class, 'logout'])
             ->name('student.logout');
+
+        Route::get('/dispensations', [DispensationController::class,'index'])
+            ->name('student.dispensation.index');
     });
 });
 

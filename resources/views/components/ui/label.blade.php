@@ -1,13 +1,23 @@
+@props([
+    'required' => false
+])
+
 <label
 
 {{ $attributes->merge([
 
-'class'=>'mb-2 block text-sm font-semibold text-zinc-700'
+'class'=>'block text-sm font-semibold text-zinc-700'
 
 ]) }}
 
 >
 
 {{ $slot }}
+
+@if($required)
+
+<span class="text-red-500">*</span>
+
+@endif
 
 </label>

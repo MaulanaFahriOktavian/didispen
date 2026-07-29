@@ -13,12 +13,12 @@ class DispensationController extends Controller
 {
     public function create()
     {
+        $student = auth('student')->user();
+
         return view('student.dispensation.create', [
-
-            'categories' => DispensationCategory::all(),
-
-            'destinations' => DispensationDestination::all(),
-
+            'student'      => $student,
+            'categories'   => \App\Models\DispensationCategory::all(),
+            'destinations' => \App\Models\DispensationDestination::all(),
         ]);
     }
 
@@ -65,5 +65,24 @@ class DispensationController extends Controller
         return redirect()
             ->route('student.dashboard')
             ->with('success','Dispensasi berhasil diajukan.');
+    }
+
+    public function index()
+    {
+        $student = auth('student')->user();
+
+        $dispensations = $student
+            ->dispensations()
+            ->with(['category','destination'])
+            ->latest()
+            ->paginate(10);
+
+        return view(
+            'student.dispensation.index',
+            compact(
+                'student',
+                'dispensations'
+            )
+        );
     }
 }
