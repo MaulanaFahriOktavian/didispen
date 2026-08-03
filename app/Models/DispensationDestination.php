@@ -4,14 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DispensationDestination extends Model
 {
-    /** @use HasFactory<\Database\Factories\DispensationDestinationFactory> */
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
-    public function dispensations()
+    protected $fillable = [
+        'name',
+        'address',
+    ];
+
+    public function dispensations(): HasMany
     {
-        return $this->hasMany(Dispensation::class);
+        return $this->hasMany(Dispensation::class, 'destination_id');
     }
 }

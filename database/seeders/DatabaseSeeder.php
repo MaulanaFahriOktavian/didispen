@@ -6,19 +6,22 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
+        // Hanya data master yang selalu dibutuhkan aplikasi
         $this->call([
-            MajorSeeder::class,
-            ClassSeeder::class,
+            AdminUserSeeder::class,
+            SchoolSettingSeeder::class,
             AcademicYearSeeder::class,
             SemesterSeeder::class,
-            StudentSeeder::class,
+            MajorSeeder::class,
+            ClassroomSeeder::class,
             DispensationCategorySeeder::class,
             DispensationDestinationSeeder::class,
+            UserSeeder::class,
+            DutyScheduleSeeder::class,
+            StudentSeeder::class,
+            TeacherSeeder::class,
         ]);
     }
 }

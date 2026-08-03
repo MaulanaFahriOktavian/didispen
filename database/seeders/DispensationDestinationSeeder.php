@@ -2,76 +2,25 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\DispensationDestination;
+use Illuminate\Database\Seeder;
 
 class DispensationDestinationSeeder extends Seeder
 {
     public function run(): void
     {
         $destinations = [
-
-            [
-                'name' => 'Rumah',
-                'need_description' => false,
-                'is_active' => true,
-            ],
-
-            [
-                'name' => 'Rumah Sakit',
-                'need_description' => false,
-                'is_active' => true,
-            ],
-
-            [
-                'name' => 'Puskesmas',
-                'need_description' => false,
-                'is_active' => true,
-            ],
-
-            [
-                'name' => 'Bank',
-                'need_description' => false,
-                'is_active' => true,
-            ],
-
-            [
-                'name' => 'Kantor Desa',
-                'need_description' => false,
-                'is_active' => true,
-            ],
-
-            [
-                'name' => 'Kantor Kecamatan',
-                'need_description' => false,
-                'is_active' => true,
-            ],
-
-            [
-                'name' => 'Tempat PKL',
-                'need_description' => false,
-                'is_active' => true,
-            ],
-
-            [
-                'name' => 'Kegiatan Sekolah',
-                'need_description' => false,
-                'is_active' => true,
-            ],
-
-            [
-                'name' => 'Instansi',
-                'need_description' => false,
-                'is_active' => true,
-            ],
-
-            [
-                'name' => 'Lainnya',
-                'need_description' => true,
-                'is_active' => true,
-            ],
+            ['name' => 'Rumah Sakit Umum Daerah', 'address' => 'Jl. Kesehatan No. 10'],
+            ['name' => 'Puskesmas Kecamatan',     'address' => 'Jl. Sejahtera No. 5'],
+            ['name' => 'Kantor Dinas Pendidikan', 'address' => 'Jl. Pemerintahan No. 1'],
+            ['name' => 'Gedung Olahraga Kota',    'address' => 'Jl. Sport Center No. 88'],
         ];
 
-        DispensationDestination::insert($destinations);
+        foreach ($destinations as $destination) {
+            DispensationDestination::updateOrCreate(
+                ['name' => $destination['name']],
+                $destination
+            );
+        }
     }
 }

@@ -1,0 +1,29 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('classrooms', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+
+            // classrooms adalah child dari majors
+            $table->foreignId('major_id')
+                ->constrained('majors')
+                ->cascadeOnDelete();
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('classrooms');
+    }
+};

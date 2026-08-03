@@ -1,289 +1,112 @@
-@extends('layouts.student')
+<x-layouts.student title="Ajukan Dispensasi">
+    <nav class="flex items-center text-sm text-[#6B7280] mb-6">
+        <a href="{{ route('student.dashboard') }}" class="hover:text-[#5B3DF5] transition-colors">Dashboard</a>
+        <svg class="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+        <span class="font-semibold text-[#111827]">Ajukan Dispensasi</span>
+    </nav>
 
-@section('content')
-
-<div class="space-y-8">
-
-    <div>
-
-        <h1 class="text-3xl font-bold">
-
-            Ajukan Dispensasi
-
-        </h1>
-
-        <p class="mt-2 text-zinc-500">
-
-            Isi formulir berikut untuk mengajukan dispensasi sekolah.
-
-        </p>
-
-    </div>
-
-    <div class="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
-
-    <div class="flex flex-col gap-6 md:flex-row md:items-center">
-
-        <div class="flex h-20 w-20 items-center justify-center rounded-full bg-violet-600 text-3xl font-bold text-white">
-
-            {{ strtoupper(substr($student->full_name,0,1)) }}
-
+    <div class="max-w-4xl mx-auto">
+        <div class="mb-8">
+            <h1 class="text-2xl font-bold text-[#111827]">Form Pengajuan Dispensasi</h1>
+            <p class="text-sm text-[#6B7280] mt-1">Isi formulir di bawah ini dengan data yang benar dan lengkap.</p>
         </div>
 
-        <div class="grid flex-1 grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <x-ui.card padding="lg">
+            <form action="{{ route('student.dispensation.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
+                @csrf
 
-            <div>
+                <div>
+                    <h3 class="text-base font-bold text-[#111827] mb-4 flex items-center gap-2">
+                        <span class="flex items-center justify-center w-6 h-6 rounded-lg bg-[#5B3DF5]/10 text-[#5B3DF5] text-xs font-bold">1</span>
+                        Informasi Dasar
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <x-forms.input 
+                            label="Nama Siswa" 
+                            name="student_name" 
+                            value="{{ auth('student')->user()->name }}" 
+                            :disabled="true"
+                        />
+                        <x-forms.input 
+                            label="NIS" 
+                            name="nis" 
+                            value="{{ auth('student')->user()->nis }}" 
+                            :disabled="true"
+                        />
+                    </div>
+                </div>
 
-                <p class="text-sm text-zinc-500">
+                <div class="border-t border-[#E5E7EB]"></div>
 
-                    Nama Siswa
+                <div>
+                    <h3 class="text-base font-bold text-[#111827] mb-4 flex items-center gap-2">
+                        <span class="flex items-center justify-center w-6 h-6 rounded-lg bg-[#5B3DF5]/10 text-[#5B3DF5] text-xs font-bold">2</span>
+                        Detail Dispensasi
+                    </h3>
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-[#111827] mb-2">Kategori Dispensasi <span class="text-[#EF4444]">*</span></label>
+                            <select name="category_id" class="block w-full h-[54px] px-4 rounded-[16px] border-2 border-[#E5E7EB] bg-white text-[#111827] focus:outline-none focus:ring-4 focus:ring-[#5B3DF5]/10 focus:border-[#5B3DF5] transition-all text-sm font-medium">
+                                <option value="">Pilih Kategori...</option>
+                                @foreach($categories ?? [] as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('category_id')
+                                <p class="mt-1.5 text-xs text-[#EF4444]">{{ $message }}</p>
+                            @enderror
+                        </div>
 
-                </p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-[#111827] mb-2">Tanggal <span class="text-[#EF4444]">*</span></label>
+                                <input type="date" name="dispensation_date" min="{{ date('Y-m-d') }}" class="block w-full h-[54px] px-4 rounded-[16px] border-2 border-[#E5E7EB] bg-white text-[#111827] focus:outline-none focus:ring-4 focus:ring-[#5B3DF5]/10 focus:border-[#5B3DF5] transition-all text-sm font-medium">
+                                @error('dispensation_date')
+                                    <p class="mt-1.5 text-xs text-[#EF4444]">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-[#111827] mb-2">Waktu Berangkat <span class="text-[#EF4444]">*</span></label>
+                                <input type="time" name="leave_time" class="block w-full h-[54px] px-4 rounded-[16px] border-2 border-[#E5E7EB] bg-white text-[#111827] focus:outline-none focus:ring-4 focus:ring-[#5B3DF5]/10 focus:border-[#5B3DF5] transition-all text-sm font-medium">
+                                @error('leave_time')
+                                    <p class="mt-1.5 text-xs text-[#EF4444]">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-[#111827] mb-2">Waktu Kembali</label>
+                                <input type="time" name="return_time" class="block w-full h-[54px] px-4 rounded-[16px] border-2 border-[#E5E7EB] bg-white text-[#111827] focus:outline-none focus:ring-4 focus:ring-[#5B3DF5]/10 focus:border-[#5B3DF5] transition-all text-sm font-medium">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                <p class="font-semibold">
+                <div class="border-t border-[#E5E7EB]"></div>
 
-                    {{ $student->full_name }}
+                <div>
+                    <h3 class="text-base font-bold text-[#111827] mb-4 flex items-center gap-2">
+                        <span class="flex items-center justify-center w-6 h-6 rounded-lg bg-[#5B3DF5]/10 text-[#5B3DF5] text-xs font-bold">3</span>
+                        Alasan
+                    </h3>
+                    <div>
+                        <label class="block text-sm font-semibold text-[#111827] mb-2">Alasan Dispensasi <span class="text-[#EF4444]">*</span></label>
+                        <textarea name="reason" rows="4" placeholder="Jelaskan alasan pengajuan dispensasi secara detail..." class="block w-full rounded-[16px] border-2 border-[#E5E7EB] bg-white text-[#111827] placeholder-[#6B7280]/50 focus:outline-none focus:ring-4 focus:ring-[#5B3DF5]/10 focus:border-[#5B3DF5] transition-all text-sm font-medium p-4 resize-none">{{ old('reason') }}</textarea>
+                        @error('reason')
+                            <p class="mt-1.5 text-xs text-[#EF4444]">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
 
-                </p>
-
-            </div>
-
-            <div>
-
-                <p class="text-sm text-zinc-500">
-
-                    NIS
-
-                </p>
-
-                <p class="font-semibold">
-
-                    {{ $student->nis }}
-
-                </p>
-
-            </div>
-
-            <div>
-
-                <p class="text-sm text-zinc-500">
-
-                    Kelas
-
-                </p>
-
-                <p class="font-semibold">
-
-                    {{ $student->class->name ?? '-' }}
-
-                </p>
-
-            </div>
-
-            <div>
-
-                <p class="text-sm text-zinc-500">
-
-                    Jurusan
-
-                </p>
-
-                <p class="font-semibold">
-
-                    {{ $student->major->name ?? '-' }}
-
-                </p>
-
-            </div>
-
-        </div>
-
+                <div class="flex items-center justify-end gap-3 pt-6 border-t border-[#E5E7EB]">
+                    <a href="{{ route('student.dashboard') }}" class="px-6 py-3 rounded-[16px] text-sm font-semibold text-[#6B7280] hover:bg-[#F8FAFC] hover:text-[#111827] transition-all">
+                        Batal
+                    </a>
+                    <x-ui.button variant="primary" size="md" type="submit" icon='<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'>
+                        Ajukan Dispensasi
+                    </x-ui.button>
+                </div>
+            </form>
+        </x-ui.card>
     </div>
-
-</div>
-
-    <x-ui.card>
-
-            <div class="mb-8">
-
-        <h2 class="text-xl font-semibold">
-
-            Formulir Dispensasi
-
-        </h2>
-
-        <p class="mt-1 text-sm text-zinc-500">
-
-            Lengkapi seluruh data dengan benar sebelum mengirim pengajuan.
-
-        </p>
-
-    </div>
-
-        <form
-            action="{{ route('student.dispensation.store') }}"
-            method="POST"
-            class="space-y-6">
-
-            @csrf
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                {{-- Kategori --}}
-                <x-forms.field>
-
-                    <x-ui.label required>
-                        Kategori Dispensasi
-                    </x-ui.label>
-
-                    <x-ui.select name="category_id">
-
-                        <option value="">
-                            -- Pilih Kategori --
-                        </option>
-
-                        @foreach($categories as $item)
-
-                            <option
-                                value="{{ $item->id }}"
-                                @selected(old('category_id') == $item->id)>
-
-                                {{ $item->name }}
-
-                            </option>
-
-                        @endforeach
-
-                    </x-ui.select>
-
-                    <x-ui.error name="category_id"/>
-
-                </x-forms.field>
-
-                {{-- Tujuan --}}
-                <x-forms.field>
-
-                    <x-ui.label required>
-                        Tujuan
-                    </x-ui.label>
-
-                    <x-ui.select name="destination_id">
-
-                        <option value="">
-                            -- Pilih Tujuan --
-                        </option>
-
-                        @foreach($destinations as $item)
-
-                            <option
-                                value="{{ $item->id }}"
-                                @selected(old('destination_id') == $item->id)>
-
-                                {{ $item->name }}
-
-                            </option>
-
-                        @endforeach
-
-                    </x-ui.select>
-
-                    <x-ui.error name="destination_id"/>
-
-                </x-forms.field>
-
-            </div>
-
-            {{-- Tanggal --}}
-            <x-forms.field>
-
-                <x-ui.label required>
-                    Tanggal Dispensasi
-                </x-ui.label>
-
-                <x-ui.input
-                    type="date"
-                    name="dispensation_date"/>
-
-                <x-ui.error
-                    name="dispensation_date"/>
-
-            </x-forms.field>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                {{-- Jam Keluar --}}
-                <x-forms.field>
-
-                    <x-ui.label required>
-                        Jam Keluar
-                    </x-ui.label>
-
-                    <x-ui.input
-                        type="time"
-                        name="leave_time"/>
-
-                    <x-ui.error
-                        name="leave_time"/>
-
-                </x-forms.field>
-
-                {{-- Jam Kembali --}}
-                <x-forms.field>
-
-                    <x-ui.label required>
-                        Jam Kembali
-                    </x-ui.label>
-
-                    <x-ui.input
-                        type="time"
-                        name="return_time"/>
-
-                    <x-ui.error
-                        name="return_time"/>
-
-                </x-forms.field>
-
-            </div>
-
-            {{-- Keperluan --}}
-            <x-forms.field>
-
-                <x-ui.label required>
-                    Keperluan
-                </x-ui.label>
-
-                <x-ui.textarea
-                    name="reason"
-                    rows="5"/>
-
-                <x-ui.error
-                    name="reason"/>
-
-            </x-forms.field>
-
-            <div class="flex justify-end gap-3 border-t border-zinc-200 pt-6">
-
-                <x-ui.button
-                    type="reset"
-                    variant="secondary">
-
-                    Reset
-
-                </x-ui.button>
-
-                <x-ui.button
-                    type="submit">
-
-                    Kirim Pengajuan
-
-                </x-ui.button>
-
-            </div>
-
-        </form>
-
-    </x-ui.card>
-
-</div>
-
-@endsection
+</x-layouts.student>

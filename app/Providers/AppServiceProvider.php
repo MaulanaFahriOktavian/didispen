@@ -9,6 +9,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use App\Repositories\Contracts\DispensationRepositoryInterface;
 use App\Repositories\DispensationRepository;
+use App\Models\Major;
+use App\Observers\MajorObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,7 +30,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->configureDefaults();
+        Major::observe(MajorObserver::class);
+        // Tambahkan observer lain di sini
+        // Classroom::observe(ClassroomObserver::class);
     }
 
     /**

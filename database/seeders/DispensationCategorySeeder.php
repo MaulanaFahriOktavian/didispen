@@ -10,47 +10,18 @@ class DispensationCategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-
-            [
-                'name' => 'Organisasi',
-                'description' => 'Kegiatan organisasi sekolah',
-            ],
-
-            [
-                'name' => 'BK',
-                'description' => 'Bimbingan Konseling',
-            ],
-
-            [
-                'name' => 'Lomba',
-                'description' => 'Mengikuti perlombaan',
-            ],
-
-            [
-                'name' => 'Kegiatan Sekolah',
-                'description' => 'Kegiatan resmi sekolah',
-            ],
-
-            [
-                'name' => 'Pribadi',
-                'description' => 'Keperluan pribadi',
-            ],
-
-            [
-                'name' => 'Lainnya',
-                'description' => 'Keperluan lainnya',
-            ],
-
+            ['name' => 'Izin Sakit',               'description' => 'Dispensasi karena sakit atau berobat'],
+            ['name' => 'Izin Keluarga',             'description' => 'Dispensasi karena urusan keluarga'],
+            ['name' => 'Keperluan Lomba',           'description' => 'Dispensasi untuk mengikuti lomba atau kompetisi'],
+            ['name' => 'Urusan Administrasi',       'description' => 'Dispensasi untuk urusan administrasi di luar sekolah'],
+            ['name' => 'Kegiatan Ekstrakurikuler',  'description' => 'Dispensasi untuk kegiatan ekstrakurikuler di luar sekolah'],
         ];
 
         foreach ($categories as $category) {
-
-            DispensationCategory::create([
-                'name' => $category['name'],
-                'description' => $category['description'],
-                'is_active' => true,
-            ]);
-
+            DispensationCategory::updateOrCreate(
+                ['name' => $category['name']],
+                $category
+            );
         }
     }
 }

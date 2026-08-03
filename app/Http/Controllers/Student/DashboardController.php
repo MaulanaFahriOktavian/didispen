@@ -3,37 +3,36 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\Dispensation;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $student = auth('student')->user();
+        $student = Auth::guard('student')->user();
+        
+        // 1. Ambil Statistik Real untuk siswa ini
+        $stats = [
+            'total'    => Dispensation::where('student_id', $student->id)->count(),
+            'pending'  => Dispensation::where('student_id', $student->id)->where('status', 'pending')->count(),
+            'approved' => Dispensation::where('student_id', $student->id)->where('status', 'approved')->count(),
+            'finished' => Dispensation::where('student_id', $student->id)->where('status', 'finished')->count(),
+        ];
 
-        return view('student.dashboard', [
+        // 2. Ambil 5 Dispensasi Terbaru siswa ini
+        $recentDispensations = Dispensation::where('student_id', $student->id)
+            ->with(['category', 'destination'])
+            ->latest()
+            ->take(5)
+            ->get();
 
-            'student' => $student,
+        // 3. DEBUG: Hapus tanda komentar (//) di baris bawah ini jika masih error, 
+        // untuk memastikan data benar-benar sampai di sini sebelum ke view.
+        // dd($stats, $recentDispensations);
 
-            'total' => $student->dispensations()->count(),
-
-            'pending' => $student->dispensations()
-                ->where('status', 'pending')
-                ->count(),
-
-            'approved' => $student->dispensations()
-                ->where('status', 'approved')
-                ->count(),
-
-            'finished' => $student->dispensations()
-                ->where('status', 'finished')
-                ->count(),
-
-            'histories' => $student->dispensations()
-                ->with('destination')
-                ->latest()
-                ->take(5)
-                ->get(),
-
-        ]);
+        // 4. Kirim ke view
+        return view('student.dashboard', compact('stats', 'recentDispensations'));
     }
 }

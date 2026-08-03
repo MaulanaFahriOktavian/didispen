@@ -9,22 +9,26 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        return view('admin.dashboard', [
+        // 1. Hitung Statistik
+        $stats = [
+            'total'    => Dispensation::count(),
+            'pending'  => Dispensation::where('status', 'pending')->count(),
+            'approved' => Dispensation::where('status', 'approved')->count(),
+            'rejected' => Dispensation::where('status', 'rejected')->count(),
+            'today'    => Dispensation::whereDate('created_at', today())->count(),
+        ];
 
-            'total' => Dispensation::count(),
+        // 2. Ambil 5 Data Terbaru
+        $recentDispensations = Dispensation::with(['student', 'teacher', 'category'])
+            ->latest()
+            ->take(5)
+            ->get();
 
-            'pending' => Dispensation::where('status','pending')->count(),
+        // DEBUG: Hapus tanda komentar (//) di baris bawah ini jika masih error, 
+        // untuk memastikan data benar-benar sampai di sini.
+        // dd($stats, $recentDispensations);
 
-            'approved' => Dispensation::where('status','approved')->count(),
-
-            'out' => Dispensation::where('status','out')->count(),
-
-            'finished' => Dispensation::where('status','finished')->count(),
-
-            'recent' => Dispensation::latest()
-                        ->take(10)
-                        ->get(),
-
-        ]);
+        // 3. Kirim ke View
+        return view('admin.dashboard', compact('stats', 'recentDispensations'));
     }
 }

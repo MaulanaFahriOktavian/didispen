@@ -1,95 +1,72 @@
 @import "tailwindcss";
 @import "../../vendor/livewire/flux/dist/flux.css";
-@import "./theme.css";
+
+/* Import Font: Plus Jakarta Sans */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 @source "../views";
 @source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
-@source "../../vendor/livewire/flux-pro/stubs/**/*.blade.php";
 @source "../../vendor/livewire/flux/stubs/**/*.blade.php";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+  /* Typography */
+  --font-sans: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  /* Colors - DIDISPEN Palette */
+  --color-primary: #5B3DF5;
+  --color-primary-hover: #6D4CFF;
+  --color-primary-dark: #4338CA;
+  --color-secondary: #7C6CF9;
+  
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --color-info: #3B82F6;
+  
+  --color-background: #F8FAFC;
+  --color-card: #FFFFFF;
+  --color-border: #E5E7EB;
+  
+  --color-text-primary: #111827;
+  --color-text-secondary: #6B7280;
 
-    /* Font */
-    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
 
-    /* Neutral */
-    --color-zinc-50:#fafafa;
-    --color-zinc-100:#f5f5f5;
-    --color-zinc-200:#e5e5e5;
-    --color-zinc-300:#d4d4d4;
-    --color-zinc-400:#a3a3a3;
-    --color-zinc-500:#737373;
-    --color-zinc-600:#525252;
-    --color-zinc-700:#404040;
-    --color-zinc-800:#262626;
-    --color-zinc-900:#171717;
-    --color-zinc-950:#0a0a0a;
-
-    /* DIDISPEN Primary */
-    --color-primary:#6D4AFF;
-    --color-primary-dark:#5935E5;
-
-    --color-success:#22C55E;
-    --color-warning:#FBBF24;
-    --color-danger:#EF4444;
-
-    --color-accent:var(--color-primary);
-    --color-accent-content:var(--color-primary);
-    --color-accent-foreground:white;
+  /* Soft Shadows (Linear/Vercel Style) */
+  --shadow-soft-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-soft-lg: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+  --shadow-glow: 0 0 20px -5px var(--color-primary);
 }
 
-@layer theme{
-
-    .dark{
-
-        --color-accent:var(--color-primary);
-
-        --color-accent-content:var(--color-primary);
-
-        --color-accent-foreground:white;
-
-    }
-
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+  }
 }
 
-@layer base{
-
-    html{
-
-        font-family:"Inter",sans-serif;
-
-    }
-
-    body{
-
-        background:#F8FAFC;
-
-        color:#111827;
-
-    }
-
-    *,
-    ::before,
-    ::after{
-
-        border-color:#E5E7EB;
-
-    }
-
-}
-
-[data-flux-field]:not(ui-radio, ui-checkbox){
-    @apply grid gap-2;
-}
-
-[data-flux-label]{
-    @apply !mb-0 !leading-tight;
-}
-
-input:focus[data-flux-control],
-textarea:focus[data-flux-control],
-select:focus[data-flux-control]{
-    @apply outline-hidden ring-2 ring-primary ring-offset-2;
+/* Custom Utilities */
+@layer utilities {
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+  }
+  .dark .glass {
+    background: rgba(17, 24, 39, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
 }

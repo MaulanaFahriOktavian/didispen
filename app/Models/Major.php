@@ -2,26 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Observers\MajorObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Major extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'code',
         'name',
-        'is_active',
+        'code',
     ];
 
-    public function classes()
+    public function classrooms(): HasMany
     {
-        return $this->hasMany(SchoolClass::class);
-    }
-
-    public function students()
-    {
-        return $this->hasMany(Student::class);
+        return $this->hasMany(Classroom::class);
     }
 }

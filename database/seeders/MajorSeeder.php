@@ -9,32 +9,15 @@ class MajorSeeder extends Seeder
 {
     public function run(): void
     {
-        Major::insert([
-            [
-                'code' => 'PPLG',
-                'name' => 'Pengembangan Perangkat Lunak dan Gim',
-                'is_active' => true,
-            ],
-            [
-                'code' => 'AKL',
-                'name' => 'Akuntansi dan Keuangan Lembaga',
-                'is_active' => true,
-            ],
-            [
-                'code' => 'PM',
-                'name' => 'Pemasaran',
-                'is_active' => true,
-            ],
-            [
-                'code' => 'MPLB',
-                'name' => 'Manajemen Perkantoran dan Layanan Bisnis',
-                'is_active' => true,
-            ],
-            [
-                'code' => 'TO',
-                'name' => 'Teknik Otomotif',
-                'is_active' => true,
-            ],
-        ]);
+        $majors = [
+            ['name' => 'Rekayasa Perangkat Lunak', 'code' => 'RPL'],
+            ['name' => 'Teknik Komputer Jaringan', 'code' => 'TKJ'],
+            ['name' => 'Multimedia',               'code' => 'MM'],
+            ['name' => 'Akuntansi',                'code' => 'AKN'],
+        ];
+
+        foreach ($majors as $major) {
+            Major::updateOrCreate(['code' => $major['code']], $major);
+        }
     }
 }

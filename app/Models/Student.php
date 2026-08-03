@@ -4,67 +4,69 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
 
 class Student extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, SoftDeletes, AuthenticatableTrait;
 
     protected $fillable = [
         'nis',
-        'nisn',
-        'full_name',
-        'gender',
-        'birth_place',
+        'name',
         'birth_date',
-        'address',
-        'phone',
-        'email',
-        'major_id',
-        'class_id',
-        'academic_year_id',
-        'status',
-        'photo',
-    ];
-
-    protected $casts = [
-        'birth_date' => 'date',
+        'gender',
     ];
 
     protected $hidden = [
         'birth_date',
     ];
 
-    protected function name(): \Illuminate\Database\Eloquent\Casts\Attribute
+    protected $casts = [
+        'birth_date' => 'date',
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Authentication Overrides
+    |--------------------------------------------------------------------------
+    */
+
+    public function getAuthIdentifierName()
     {
-        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
-            get: fn () => $this->full_name,
-        );
+        return 'nis';
     }
 
-    public function dispensations()
+    public function getAuthPasswordName()
     {
-        return $this->hasMany(Dispensation::class);
+        return 'birth_date';
     }
 
     public function getAuthPassword()
     {
-        return null;
+        return $this->birth_date->format('Y-m-d');
     }
 
-    public function major()
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
+
+    public function classrooms(): BelongsToMany
     {
-        return $this->belongsTo(Major::class);
+        return $this->belongsToMany(
+            Classroom::class,
+            'student_classrooms'
+        )->withPivot('academic_year_id', 'semester_id')
+         ->withTimestamps();
     }
 
-    public function schoolClass()
+    public function dispensations(): HasMany
     {
-        return $this->belongsTo(SchoolClass::class, 'class_id');
-    }
-
-    public function academicYear()
-    {
-        return $this->belongsTo(AcademicYear::class);
+        return $this->hasMany(Dispensation::class);
     }
 }

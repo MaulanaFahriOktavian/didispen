@@ -9,9 +9,14 @@ class AcademicYearSeeder extends Seeder
 {
     public function run(): void
     {
-        AcademicYear::create([
-            'year' => '2026/2027',
-            'is_active' => true,
-        ]);
+        AcademicYear::updateOrCreate(
+            ['year' => '2025/2026'],
+            ['is_active' => true]
+        );
+
+        AcademicYear::updateOrCreate(
+            ['year' => '2026/2027'],
+            ['is_active' => false]
+        );
     }
 }
