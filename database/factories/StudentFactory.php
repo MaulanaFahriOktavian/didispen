@@ -3,6 +3,9 @@
 namespace Database\Factories;
 
 use App\Models\Student;
+use App\Models\Major;
+use App\Models\Classroom;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class StudentFactory extends Factory
@@ -12,10 +15,25 @@ class StudentFactory extends Factory
     public function definition(): array
     {
         return [
-            'nis'        => fake()->unique()->numerify('##########'),
-            'name'       => fake()->name(),
-            'birth_date' => fake()->date('Y-m-d', '2010-01-01'),
-            'gender'     => fake()->randomElement(['L', 'P']),
+            'user_id' => User::inRandomOrder()->value('id'),
+
+            'major_id' => Major::inRandomOrder()->value('id'),
+
+            'classroom_id' => Classroom::inRandomOrder()->value('id'),
+
+            'nis' => fake()->unique()->numerify('##########'),
+
+            'nisn' => fake()->unique()->numerify('##########'),
+
+            'full_name' => fake()->name(),
+
+            'gender' => fake()->randomElement(['L', 'P']),
+
+            'phone' => fake()->phoneNumber(),
+
+            'email' => fake()->unique()->safeEmail(),
+
+            'status' => 'aktif',
         ];
     }
 }

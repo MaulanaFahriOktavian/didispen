@@ -7,6 +7,8 @@ use App\Http\Controllers\Student\DashboardController as StudentDashboardControll
 use App\Http\Controllers\Student\DispensationController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\MajorController;
+use App\Http\Controllers\Admin\ClassroomController;
 use App\Http\Controllers\Guru\DashboardController as GuruDashboardController;
 use App\Http\Controllers\Satpam\DashboardController as SatpamDashboardController;
 use Illuminate\Support\Facades\Auth;
@@ -80,7 +82,7 @@ Route::prefix('student')->name('student.')->group(function () {
         Route::get('/dashboard', [StudentDashboardController::class, 'index'])
             ->name('dashboard');
 
-        // Dispensation Routes (Cleaned up duplicates)
+        // Dispensation Routes
         Route::get('/dispensations', [DispensationController::class, 'index'])
             ->name('dispensation.index');
 
@@ -116,20 +118,30 @@ Route::prefix('user')->name('user.')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| ADMIN (Protected Routes)
+| ADMIN (Protected Routes) - CONSOLIDATED
 |--------------------------------------------------------------------------
 */
-// Group admin digabung menjadi satu agar rapi
 Route::middleware(['auth:web', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
         
-        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
-            ->name('dashboard');
-            
-        // Resource route untuk kategori (menggunakan import di atas)
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+        
+        // Master Category
         Route::resource('categories', CategoryController::class);
+
+        // Master Major (Jurusan)
+        Route::resource('majors', MajorController::class);
+        Route::post('majors/bulk-destroy', [MajorController::class, 'bulkDestroy'])->name('majors.bulk-destroy');
+        Route::post('majors/bulk-restore', [MajorController::class, 'bulkRestore'])->name('majors.bulk-restore');
+        Route::post('majors/{id}/restore', [MajorController::class, 'restore'])->name('majors.restore');
+
+        // Master Classroom (Kelas)
+        Route::resource('classrooms', ClassroomController::class);
+        Route::post('classrooms/bulk-destroy', [ClassroomController::class, 'bulkDestroy'])->name('classrooms.bulk-destroy');
+        Route::post('classrooms/bulk-restore', [ClassroomController::class, 'bulkRestore'])->name('classrooms.bulk-restore');
+        Route::post('classrooms/{id}/restore', [ClassroomController::class, 'restore'])->name('classrooms.restore');
         
     });
 
@@ -159,28 +171,19 @@ Route::middleware(['auth:web', 'role:satpam'])
             ->name('dashboard');
     });
 
-Route::middleware(['auth:web', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-    
-    // Master Major
-    Route::resource('major', \App\Http\Controllers\Admin\MajorController::class);
-    Route::post('major/bulk-destroy', [\App\Http\Controllers\Admin\MajorController::class, 'bulkDestroy'])->name('major.bulk-destroy');
-    Route::post('major/{major}/restore', [\App\Http\Controllers\Admin\MajorController::class, 'restore'])->name('major.restore');
-    Route::delete('major/{major}/force-delete', [\App\Http\Controllers\Admin\MajorController::class, 'forceDelete'])->name('major.force-delete');
-    Route::post('major/bulk-restore', [\App\Http\Controllers\Admin\MajorController::class, 'bulkRestore'])->name('major.bulk-restore');
-});
+/*
+|--------------------------------------------------------------------------
+| GLOBAL LOGOUT
+|--------------------------------------------------------------------------
+*/
+Route::post('/logout', function () {
+    Auth::guard('web')->logout();
+    Auth::guard('student')->logout();
 
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
 
-    Route::post('/logout', function () {
-
-        Auth::guard('web')->logout();
-        Auth::guard('student')->logout();
-
-        request()->session()->invalidate();
-        request()->session()->regenerateToken();
-
-        return redirect('/login');
-
-    })->name('logout');
+    return redirect('/login');
+})->name('logout');
 
 require __DIR__.'/settings.php';

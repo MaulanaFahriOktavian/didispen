@@ -11,21 +11,36 @@ return new class extends Migration
         Schema::create('teachers', function (Blueprint $table) {
             $table->id();
 
-            // teachers adalah child dari users
             $table->foreignId('user_id')
                 ->nullable()
                 ->unique()
-                ->constrained('users')
+                ->constrained()
                 ->cascadeOnDelete();
 
-            $table->string('name');
             $table->string('nip')->unique();
+
+            $table->string('full_name');
+
+            $table->enum('gender', [
+                'L',
+                'P'
+            ]);
+
             $table->string('phone')->nullable();
 
-            $table->timestamps();
-            $table->softDeletes();
+            $table->string('email')->nullable()->unique();
 
-            $table->index('nip');
+            $table->boolean('is_homeroom_teacher')
+                ->default(false);
+
+            $table->enum('status',[
+                'aktif',
+                'nonaktif'
+            ])->default('aktif');
+
+            $table->timestamps();
+
+            $table->softDeletes();
         });
     }
 

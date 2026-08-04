@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Observers\MajorObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,6 +14,12 @@ class Major extends Model
     protected $fillable = [
         'name',
         'code',
+        'description',
+        'status',
+    ];
+
+    protected $casts = [
+        'status' => 'string',
     ];
 
     public function classrooms(): HasMany

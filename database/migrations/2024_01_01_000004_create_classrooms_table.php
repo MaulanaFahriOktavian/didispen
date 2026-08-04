@@ -10,13 +10,12 @@ return new class extends Migration
     {
         Schema::create('classrooms', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-
-            // classrooms adalah child dari majors
-            $table->foreignId('major_id')
-                ->constrained('majors')
-                ->cascadeOnDelete();
-
+            $table->foreignId('major_id')->constrained('majors')->cascadeOnDelete();
+            $table->string('grade'); // X, XI, XII
+            $table->string('name'); // Contoh: PPLG 1
+            $table->string('full_name')->unique(); // Contoh: X PPLG 1
+            $table->integer('capacity')->default(36);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

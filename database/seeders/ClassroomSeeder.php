@@ -10,14 +10,37 @@ class ClassroomSeeder extends Seeder
 {
     public function run(): void
     {
-        $majors = Major::all();
+        $majorsData = [
+            'PPLG' => 'Pengembangan Perangkat Lunak dan Gim',
+            'AKL'  => 'Akuntansi Keuangan Lembaga',
+            'MPLB' => 'Manajemen Perkantoran dan Layanan Bisnis',
+            'PM'   => 'Pemasaran',
+            'TO'   => 'Teknik Otomotif',
+        ];
 
-        foreach ($majors as $major) {
-            foreach (['X', 'XI', 'XII'] as $grade) {
+        $grades = ['X', 'XI', 'XII'];
+
+        foreach ($majorsData as $code => $majorName) {
+            // Cari atau buat jurusan
+            $major = Major::firstOrCreate(
+                ['code' => $code],
+                [
+                    'name' => $majorName,
+                    'status' => 'active',
+                    'description' => "Jurusan {$majorName} SMKN 1 Bangsri"
+                ]
+            );
+
+            // Buat 2 kelas untuk setiap tingkat (X, XI, XII)
+            foreach ($grades as $grade) {
                 for ($i = 1; $i <= 2; $i++) {
-                    Classroom::firstOrCreate([
-                        'name'     => $grade . ' ' . $major->code . ' ' . $i,
-                        'major_id' => $major->id,
+                    Classroom::create([
+                        'major_id'  => $major->id,
+                        'grade'     => $grade,
+                        'name'      => "{$code} {$i}",
+                        'full_name' => "{$grade} {$code} {$i}",
+                        'capacity'  => 36,
+                        'is_active' => true,
                     ]);
                 }
             }

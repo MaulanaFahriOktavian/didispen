@@ -12,9 +12,30 @@ class ClassroomFactory extends Factory
 
     public function definition(): array
     {
+        $grade = fake()->randomElement(['X', 'XI', 'XII']);
+        $major = Major::factory();
+        
         return [
-            'name'     => fake()->randomElement(['X', 'XI', 'XII']) . ' ' . fake()->numberBetween(1, 10),
-            'major_id' => Major::factory(),
+            'major_id' => $major,
+            'name' => fake()->randomElement(['Reguler', 'Unggulan', 'Accelerated']) . ' ' . $grade,
+            'grade' => $grade,
+            'code' => fake()->unique()->lexify(8),
+            'description' => fake()->sentence(),
+            'status' => fake()->randomElement(['active', 'inactive']),
         ];
+    }
+
+    public function active(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'active',
+        ]);
+    }
+
+    public function inactive(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'inactive',
+        ]);
     }
 }

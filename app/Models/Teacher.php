@@ -14,9 +14,13 @@ class Teacher extends Model
 
     protected $fillable = [
         'user_id',
-        'name',
         'nip',
+        'full_name',
+        'gender',
         'phone',
+        'email',
+        'is_homeroom_teacher',
+        'status',
     ];
 
     public function user(): BelongsTo

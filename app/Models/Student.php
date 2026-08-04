@@ -12,13 +12,19 @@ use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
 
 class Student extends Authenticatable
 {
-    use HasFactory, SoftDeletes, AuthenticatableTrait;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'user_id',
+        'major_id',
+        'classroom_id',
         'nis',
-        'name',
-        'birth_date',
+        'nisn',
+        'full_name',
         'gender',
+        'phone',
+        'email',
+        'status',
     ];
 
     protected $hidden = [
@@ -68,5 +74,20 @@ class Student extends Authenticatable
     public function dispensations(): HasMany
     {
         return $this->hasMany(Dispensation::class);
+    }
+
+    public function classroom()
+    {
+        return $this->belongsTo(Classroom::class);
+    }
+
+    public function major()
+    {
+        return $this->belongsTo(Major::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
